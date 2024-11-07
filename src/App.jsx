@@ -2,6 +2,7 @@ import { useState } from "react";
 import NewProject from "./Components/NewProject";
 import NoProjectSelected from "./Components/NoProjectSelected";
 import ProjectsSidebar from "./Components/ProjectsSidebar";
+import Project from "./Components/Project";
 
 function App() {
 
@@ -10,6 +11,15 @@ function App() {
     selectedProjectId: undefined,
     projects: []
   });
+
+  function handleSelectedProject(id) {
+    setProjectsState(prevState => {
+      return {
+        ...prevState,
+        selectedProjectId: id
+      }
+    })
+  }
 
   function handleStartAddProject() {
     //updating project state, without losing the old/previous state -  at some point, the 'projects' will no longer be an empty array
@@ -46,17 +56,25 @@ function App() {
     });
   }
 
+  const selectedProject =  projectsState.projects.find(project => project.id === projectsState.selectedProjectId);
+
   let content;
 
   if (projectsState.selectedProjectId === null) {
     content = <NewProject onAdd={ handleAddProject } onCancel={ handleCancelAddPorject } />
+  } else if (selectedProject) {
+    content = <Project project={ selectedProject } />;
   } else {
     content = <NoProjectSelected onStartAddProject={ handleStartAddProject } />
   }
 
   return (
     <main className="h-screen my-8 flex gap-8">
-      <ProjectsSidebar onStartAddProject={ handleStartAddProject } projects={ projectsState.projects } />
+      <ProjectsSidebar 
+        onStartAddProject={ handleStartAddProject } 
+        projects={ projectsState.projects } 
+        onSelectProject={ handleSelectedProject }
+      />
       { content }
     </main>
   );
