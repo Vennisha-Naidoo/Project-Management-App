@@ -6,14 +6,14 @@ import ProjectsSidebar from "./Components/ProjectsSidebar";
 function App() {
 
   // selectedProjectId - 'undefined' is nothing and 'null' is adding a new project
-  const [projectState, setProjectState] = useState({
+  const [projectsState, setProjectsState] = useState({
     selectedProjectId: undefined,
     projects: []
   });
 
   function handleStartAddProject() {
     //updating project state, without losing the old/previous state -  at some point, the 'projects' will no longer be an empty array
-    setProjectState(prevState => {
+    setProjectsState(prevState => {
       return {
         ...prevState,
         selectedProjectId: null
@@ -21,10 +21,27 @@ function App() {
     })
   }
 
+  function handleAddProject(projectData) {
+    setProjectsState(prevState => {
+
+      const newProject = {
+        ...projectData,
+        id: Math.random()
+      }
+
+      return { 
+        ...prevState,
+        projects: [...prevState.projects, newProject]
+      }
+    });
+  }
+
+  console.log(projectsState);
+
   let content;
 
-  if (projectState.selectedProjectId === null) {
-    content = <NewProject />
+  if (projectsState.selectedProjectId === null) {
+    content = <NewProject onAdd={ handleAddProject } />
   } else {
     content = <NoProjectSelected onStartAddProject={ handleStartAddProject } />
   }
