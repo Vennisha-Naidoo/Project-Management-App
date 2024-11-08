@@ -9,8 +9,34 @@ function App() {
   // selectedProjectId - 'undefined' is nothing and 'null' is adding a new project
   const [projectsState, setProjectsState] = useState({
     selectedProjectId: undefined,
-    projects: []
+    projects: [],
+    tasks: []
   });
+
+  function handleAddTask(addProjectTask) {
+    setProjectsState(prevState => {
+      const taskId = Math.random();
+      const newTask = {
+        text: addProjectTask,
+        projectId: prevState.selectedProjectId,
+        id: taskId
+      }
+
+      return { 
+        ...prevState,
+        tasks: [newTask, ...prevState.tasks]
+      }
+    });
+  }
+
+  function handleDeleteTask(id) {
+    setProjectsState(prevState => {
+      return {
+        ...prevState,
+        tasks: prevState.tasks.filter((task) => task.id !== id)
+      }
+    });
+  }
 
   function handleSelectedProject(id) {
     setProjectsState(prevState => {
@@ -42,10 +68,10 @@ function App() {
 
   function handleAddProject(projectData) {
     setProjectsState(prevState => {
-
+      const projectId = Math.random();
       const newProject = {
         ...projectData,
-        id: Math.random()
+        id: projectId
       }
 
       return { 
@@ -63,7 +89,7 @@ function App() {
         selectedProjectId: undefined,
         projects: prevState.projects.filter((project) => project.id !== prevState.selectedProjectId)
       }
-    })
+    });
   }
 
   const selectedProject =  projectsState.projects.find(project => project.id === projectsState.selectedProjectId);
@@ -73,7 +99,7 @@ function App() {
   if (projectsState.selectedProjectId === null) {
     content = <NewProject onAdd={ handleAddProject } onCancel={ handleCancelAddPorject } />
   } else if (selectedProject) {
-    content = <Project project={ selectedProject } onDelete={ handleDeleteProject } />;
+    content = <Project project={ selectedProject } onDelete={ handleDeleteProject } tasks={ projectsState.tasks } onAddTask={ handleAddTask } onDeleteTask={ handleDeleteTask } />;
   } else {
     content = <NoProjectSelected onStartAddProject={ handleStartAddProject } />
   }
